@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			http-equiv="X-UA-Compatible"
+			content="IE=edge" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			.flex {
+				display: flex;
+				align-items: flex-end;
+				justify-content: space-evenly;
+				min-height: 80vh;
+				transition: all 100ms ease-in-out;
+			}
+			.flex > div {
+				position: absolute;
+				width: 2rem;
+				height: 10rem;
+				top: 0;
+				left: 25vw;
+				background-color: teal;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				transition: all 1s linear;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</body>
+	<script>
+		let array = [];
+		const arr = [5, 9, 8, 2, 6];
+
+		const swap = (i, j) => {
+			array[i].style.left = `${j * 5 + 25}rem`;
+			array[j].style.left = `${i * 5 + 25}rem`;
+
+			let t = array[i];
+			array[i] = array[j];
+			array[j] = t;
+
+			let tem = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tem;
+
+			console.log(arr);
+		};
+
+		for (let i = 0; i < arr.length; i++) {
+			let bar = document.querySelector(`.flex > div:nth-child(${i + 1})`);
+			bar.innerHTML = arr[i];
+			array.push(bar);
+			bar.style.left = `${i * 5 + 25}rem`;
+			bar.style.height = `${arr[i]}rem`;
+		}
+
+		const wait = (delay) =>
+			new Promise((resolve) => setTimeout(resolve, delay));
+
+		const bubbleSort = async () => {
+			for (let i = 0; i < arr.length; i++) {
+				await wait(1000);
+
+				for (let index = 0; index < array.length - 1 - i; index++) {
+					array[index].style.backgroundColor = 'red';
+					array[index + 1].style.backgroundColor = 'red';
+
+					await wait(1000);
+
+					if (arr[index] > arr[index + 1]) {
+						swap(index, index + 1);
+					}
+
+					array[index].style.backgroundColor = 'teal';
+					array[index + 1].style.backgroundColor = 'teal';
+				}
+			}
+		};
+
+		async function insertionSort() {
+			let i, key, j;
+			for (i = 1; i < arr.length; i++) {
+				key = arr[i];
+				j = i - 1;
+
+				array[i].style.backgroundColor = 'red';
+				await wait(1000);
+
+				while (j >= 0 && arr[j] > key) {
+					await wait(1000);
+					swap(j, j + 1);
+					j = j - 1;
+				}
+				array[j + 1].style.backgroundColor = 'teal';
+				console.log(arr);
+			}
+		}
+
+		async function selectionSort() {
+			let i, j, min_idx;
+
+			// One by one move boundary of unsorted subarray
+			for (i = 0; i < arr.length - 1; i++) {
+				// Find the minimum element in unsorted array
+
+				for (let k = i + 1; k < array.length; k++) {
+					array[k].style.backgroundColor = 'teal';
+				}
+
+				array[i].style.backgroundColor = 'purple';
+				await wait(1000);
+				min_idx = i;
+				for (j = i + 1; j < arr.length; j++) {
+					array[j].style.backgroundColor = 'red';
+
+					await wait(1000);
+
+					if (arr[j] < arr[min_idx]) {
+						array[min_idx].style.backgroundColor = 'teal';
+						min_idx = j;
+					}
+				}
+
+				array[min_idx].style.backgroundColor = 'yellow';
+
+				// Swap the found minimum element with the first element
+				swap(min_idx, i);
+				array[i].style.backgroundColor = 'green';
+			}
+		}
+
+		async function partition(low, high) {
+			console.log('partition');
+			let pivot = arr[high];
+
+			array[high].style.backgroundColor = 'red';
+
+			let i = low - 1;
+
+			for (let j = low; j <= high - 1; j++) {
+				// await wait(1000);
+
+				if (arr[j] < pivot) {
+					i++;
+					swap(i, j);
+				}
+			}
+
+			swap(i + 1, high);
+
+			return i + 1;
+		}
+
+		async function quickSort(low, high) {
+			// await wait(1000);
+			console.log('quickSort');
+			if (low < high) {
+				let pi = partition(low, high);
+
+				quickSort(low, pi - 1);
+				quickSort(pi + 1, high);
+			}
+			console.log(arr);
+		}
+
+		// selectionSort();
+
+		// insertionSort();
+
+		// bubbleSort();
+
+		quickSort(0, arr.length - 1);
+	</script>
+</html>
