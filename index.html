@@ -152,29 +152,38 @@
 			let i = low - 1;
 
 			for (let j = low; j <= high - 1; j++) {
-				// await wait(1000);
+				array[j].style.backgroundColor = 'yellow';
+
+				await wait(1000);
+				array[j].style.backgroundColor = 'teal';
 
 				if (arr[j] < pivot) {
 					i++;
 					swap(i, j);
 				}
+
+
 			}
-
+			await wait(1000)
 			swap(i + 1, high);
+			array[i+1].style.backgroundColor = 'teal';
 
-			return i + 1;
+			return (i + 1);
 		}
 
 		async function quickSort(low, high) {
-			// await wait(1000);
-			console.log('quickSort');
+			await wait(1000);
+			console.log('quickSort',low,high);
 			if (low < high) {
-				let pi = partition(low, high);
-
-				quickSort(low, pi - 1);
-				quickSort(pi + 1, high);
+				let pi
+				let p=partition(low, high)
+				p.then((res)=>{
+					pi= +res
+					console.log(res)
+					quickSort(low, pi - 1); 
+					quickSort(pi + 1, high);
+				})	
 			}
-			console.log(arr);
 		}
 
 		// selectionSort();
