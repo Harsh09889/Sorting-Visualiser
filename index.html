@@ -15,7 +15,7 @@
 				align-items: flex-end;
 				justify-content: space-evenly;
 				min-height: 80vh;
-				transition: all 100ms ease-in-out;
+				/* transition: all 100ms ease-in-out; */
 			}
 			.flex > div {
 				position: absolute;
@@ -28,7 +28,7 @@
 				align-items: center;
 				justify-content: center;
 				color: white;
-				transition: all 1s linear;
+				transition: all 400ms linear;
 			}
 		</style>
 	</head>
@@ -39,15 +39,25 @@
 			<div></div>
 			<div></div>
 			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
 		</div>
+		<button onclick="selectionSort()">Click to sort</button>
 	</body>
+
+	<!-- <script src="quickSort.js"></script> -->
+
 	<script>
 		let array = [];
-		const arr = [5, 9, 8, 2, 6];
+		const arr = [13, 1, 9, 15, 7, 25, 11, 9, 3, 24, 17];
 
 		const swap = (i, j) => {
-			array[i].style.left = `${j * 5 + 25}rem`;
-			array[j].style.left = `${i * 5 + 25}rem`;
+			array[i].style.left = `${j * 5 + 5}rem`;
+			array[j].style.left = `${i * 5 + 5}rem`;
 
 			let t = array[i];
 			array[i] = array[j];
@@ -57,132 +67,145 @@
 			arr[i] = arr[j];
 			arr[j] = tem;
 
-			console.log(arr);
+			console.log('swap called');
 		};
 
 		for (let i = 0; i < arr.length; i++) {
 			let bar = document.querySelector(`.flex > div:nth-child(${i + 1})`);
 			bar.innerHTML = arr[i];
 			array.push(bar);
-			bar.style.left = `${i * 5 + 25}rem`;
+			bar.style.left = `${i * 5 + 5}rem`;
 			bar.style.height = `${arr[i]}rem`;
 		}
 
-		const wait = (delay) =>
-			new Promise((resolve) => setTimeout(resolve, delay));
+		const wait = (delay, color, ...args) =>
+			new Promise((resolve) => setTimeout(resolve, delay)).then(() => {
+				console.log(args);
+				args &&
+					args.forEach((e) => {
+						if (e) e.style.backgroundColor = color;
+					});
+			});
 
 		const bubbleSort = async () => {
-			for (let i = 0; i < arr.length; i++) {
-				await wait(1000);
-
+			for (let i = 0; i < arr.length - 1; i++) {
+				// await wait(1000);
+				let sorted = true;
 				for (let index = 0; index < array.length - 1 - i; index++) {
 					array[index].style.backgroundColor = 'red';
 					array[index + 1].style.backgroundColor = 'red';
 
-					await wait(1000);
+					await wait(600);
 
 					if (arr[index] > arr[index + 1]) {
+						sorted = false;
 						swap(index, index + 1);
 					}
+					await wait(400, 'teal', array[index], array[index + 1]);
 
-					array[index].style.backgroundColor = 'teal';
-					array[index + 1].style.backgroundColor = 'teal';
+					// array[index].style.backgroundColor = 'teal';
+					// array[index + 1].style.backgroundColor = 'teal';
 				}
+				if (sorted) break;
 			}
 		};
 
 		async function insertionSort() {
 			let i, key, j;
+			let count = 0;
 			for (i = 1; i < arr.length; i++) {
 				key = arr[i];
 				j = i - 1;
 
 				array[i].style.backgroundColor = 'red';
-				await wait(1000);
+				// await wait(1000);
 
 				while (j >= 0 && arr[j] > key) {
-					await wait(1000);
+					await wait(500);
 					swap(j, j + 1);
 					j = j - 1;
 				}
-				array[j + 1].style.backgroundColor = 'teal';
-				console.log(arr);
+
+				// await wait(500, 'teal', array[j + 1]);
+				await wait(500, 'green', array[j + 1], array[j]);
+				// array[j + 1].style.backgroundColor = 'teal';
+				// console.log(arr);
 			}
 		}
 
 		async function selectionSort() {
 			let i, j, min_idx;
 
-			// One by one move boundary of unsorted subarray
 			for (i = 0; i < arr.length - 1; i++) {
-				// Find the minimum element in unsorted array
-
 				for (let k = i + 1; k < array.length; k++) {
 					array[k].style.backgroundColor = 'teal';
 				}
 
 				array[i].style.backgroundColor = 'purple';
-				await wait(1000);
+				// await wait(1000);
 				min_idx = i;
 				for (j = i + 1; j < arr.length; j++) {
-					array[j].style.backgroundColor = 'red';
+					// array[j].style.backgroundColor = 'red';
 
-					await wait(1000);
+					await wait(500);
+
+					array[j].style.backgroundColor = 'yellow';
+					await wait(500);
 
 					if (arr[j] < arr[min_idx]) {
-						array[min_idx].style.backgroundColor = 'teal';
+						array[j].style.backgroundColor = 'red';
+						if (min_idx !== i) array[min_idx].style.backgroundColor = 'yellow';
 						min_idx = j;
 					}
 				}
 
-				array[min_idx].style.backgroundColor = 'yellow';
+				// array[min_idx].style.backgroundColor = 'yellow';
 
 				// Swap the found minimum element with the first element
 				swap(min_idx, i);
+				await wait(500, 'teal', array[i], array[min_idx]);
 				array[i].style.backgroundColor = 'green';
 			}
 		}
 
-		async function partition(low, high) {
-			console.log('partition');
-			let pivot = arr[high];
+		function merge(arr, start, mid, end) {
+			let start2 = mid + 1;
 
-			array[high].style.backgroundColor = 'red';
-
-			let i = low - 1;
-
-			for (let j = low; j <= high - 1; j++) {
-				array[j].style.backgroundColor = 'yellow';
-
-				await wait(1000);
-				array[j].style.backgroundColor = 'teal';
-
-				if (arr[j] < pivot) {
-					i++;
-					swap(i, j);
-				}
-
-
+			// If the direct merge is already sorted
+			if (arr[mid] <= arr[start2]) {
+				return;
 			}
-			await wait(1000)
-			swap(i + 1, high);
-			array[i+1].style.backgroundColor = 'teal';
 
-			return (i + 1);
+			while (start <= mid && start2 <= end) {
+				// If element 1 is in right place
+				if (arr[start] <= arr[start2]) {
+					start++;
+				} else {
+					let value = arr[start2];
+					let index = start2;
+
+					while (index != start) {
+						arr[index] = arr[index - 1];
+						index--;
+					}
+					arr[start] = value;
+
+					start++;
+					mid++;
+					start2++;
+				}
+			}
 		}
 
-		async function quickSort(low, high) {
-			await wait(1000);
-			console.log('quickSort',low,high);
-			if (low < high) {
-				let pi
-				let p=partition(low, high)
-				p.then((res)=>{
-					pi= +res
-					console.log(res)
-					quickSort(low, pi - 1); 
-					quickSort(pi + 1, high);
-				})	
+		async function mergeSort(arr, l, r) {
+			if (l < r) {
+				let m = l + Math.floor((r - l) / 2);
+				await wait(1000);
+
+				mergeSort(arr, l, m);
+				mergeSort(arr, m + 1, r);
+
+				merge(arr, l, m, r);
 			}
 		}
 
@@ -192,6 +215,6 @@
 
 		// bubbleSort();
 
-		quickSort(0, arr.length - 1);
+		// quickSort(0, arr.length - 1);
 	</script>
 </html>
